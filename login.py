@@ -54,7 +54,7 @@ class Login:
 
 log = Tk()
 Login(log)
-log.title("Acesso - IM v0.3")
+log.title("Acesso - IM v1.0")
 log.geometry("300x200")
 log.resizable(width=False, height=False)
 log.mainloop()

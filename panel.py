@@ -4,7 +4,7 @@ import socket
 import threading
 
 host = 'localhost'
-port = 50000
+port = 5000
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -16,13 +16,15 @@ class panel:
         
         #Declarando os parametros da janela
         self.window = master
-        self.window.title("Internal Messages v0.3")
+        self.window.title("Internal Messages v1.0")
         self.window.geometry("800x600")
         self.window.resizable(width=False, height=False)
         
         try:
             s.connect((host, port))
+            s.send(str.encode(str("00-00-00-00-00-00")))
             messagebox.showinfo(title="Internal Message", message="Bem-Vindo " + self.name)
+            s.send(str.encode(str("00-00-6e-61-6d-65" + self.name)))
         except:
             messagebox.showwarning(title="Internal Message Error", message="Error Code: 503\nServidor não encontrado")
             self.window.destroy()
@@ -82,7 +84,18 @@ class panel:
                 data = s.recv(1024)
                 
                 msg = data.decode()
-                print(msg)
+                
+                if msg == "73-63-6c-6f-73-65":
+                    th = True
+        
+                    s.send(str.encode(str("63-63-6c-6f-73-65" + self.name)))
+                    
+                    s.shutdown(0)
+                    s.close()
+                    self.window.destroy()
+                    break
+                    
+                #print(msg)
                 self.txtChat["state"] = "normal"
                 self.txtChat.insert(END, msg)
                 self.txtChat.yview_moveto(1.0)
@@ -96,17 +109,21 @@ class panel:
     def quiting(self, event):
         th = True
         
-        s.shutdown(1)
+        s.send(str.encode(str("63-63-6c-6f-73-65" + self.name)))
+        
+        s.shutdown(0)
         s.close()
         self.window.destroy()
     
     def send(self, event):
         msg = str(self.txtMsg.get())
-        msg = self.name + ":\n  " + msg + "\n"
         
-        s.send(str.encode(str(msg)))
-        
-        self.txtMsg.delete(0, END)
+        if msg != "":
+            msg = "00-00-00-00-00-00" + self.name + ":\n  " + msg + "\n\n"
+            
+            s.send(str.encode(str(msg)))
+            
+            self.txtMsg.delete(0, END)
         
     
 
