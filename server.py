@@ -1,10 +1,14 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+import tkinter.font as tkFont
 import socket
 import time, _thread as thread
 import threading
 from consoleServer import server_close
+import os
+
+path = os.path.expanduser("~/")
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 ender = ""
@@ -20,6 +24,9 @@ class Server:
         #Frame master
         self.container = Frame(master)
         self.container.pack()
+        
+        #Fontes
+        self.fontStyle = tkFont.Font(family="Verdana", size=12, weight="bold")
         
         #Frames de organização
         self.connDef = LabelFrame(self.container, text="Connection Definition")
@@ -66,14 +73,14 @@ class Server:
         self.txtPort.grid(row = 1, column = 1, padx=10)
         
         #Status
-        self.lblStatus = Label(self.state, text="Server: Stopped")
+        self.lblStatus = Label(self.state, fg="red", text="Server: Stopped")
         self.lblStatus.pack(pady=10, padx=10)
         
         #Buttons
-        self.btnStart = Button(self.buttons, text="Start", width="10", command=self.init)
+        self.btnStart = Button(self.buttons, text="Start", width="10", bg="green", font=self.fontStyle, command=self.init)
         self.btnStart.grid(row = 0, column = 0, pady=5, padx=10)
         
-        self.btnStop = Button(self.buttons, text="Stop", width="10", state="disabled", command=self.stopall)
+        self.btnStop = Button(self.buttons, text="Stop", width="10", state="disabled", bg="red", font=self.fontStyle, command=self.stopall)
         self.btnStop.grid(row = 1, column = 0, pady=5, padx=10)
         
         #Listen
@@ -83,15 +90,21 @@ class Server:
         self.cmbListen.grid(row = 0, column = 0, pady=10, padx=40)
         
         #Save
-        self.btnSave = Button(self.save, text="Save", width="10", command=self.saveFile)
+        self.btnSave = Button(self.save, text="Save", width="10", bg="green", font=self.fontStyle, command=self.saveFile)
         self.btnSave.grid(row = 0, column = 0)
         
         #Console
         self.lblSpace = Label(self.log)
-        self.lblSpace.grid(row = 0, column = 0)
+        self.lblSpace.pack(side=TOP)
         
-        self.txtConsole = Text(self.log, state="disabled", width="75", height="10")
-        self.txtConsole.grid(row = 1, column = 0)
+        #Scrollbar/chat
+        self.cs = Scrollbar(self.log, orient="vertical")
+        self.cs.pack(side=RIGHT, fill="y")
+        
+        self.txtConsole = Text(self.log, state="disabled", width="75", height="10", font="Verdana 10", relief="raise", yscrollcommand=self.cs.set)
+        self.txtConsole.pack(side=BOTTOM)
+        
+        self.cs.config(command=self.txtConsole.yview)
     
     def now(self):
         return time.ctime(time.time())
@@ -109,6 +122,7 @@ class Server:
             if len(data) < 17 and len(data) != 0:
                 self.txtConsole["state"] = "normal"
                 self.txtConsole.insert(END, "Error receiving data\n\n")
+                self.txtConsole.yview_moveto(1.0)
                 self.txtConsole["state"] = "disabled"
             else:                
                 code = data.decode("utf8")[:17]
@@ -140,6 +154,8 @@ class Server:
                     self.txtConsole["state"] = "normal"
                     self.txtConsole.insert(END, consoleMsg)
                     self.txtConsole["state"] = "disabled"
+                    
+                self.txtConsole.yview_moveto(1.0)
                 
                 if not data:
                     clients.pop(posi)
@@ -155,19 +171,23 @@ class Server:
             
             self.txtConsole["state"] = "normal"
             self.txtConsole.insert(END, "Server is running\n")
+            self.txtConsole.yview_moveto(1.0)
             self.txtConsole["state"] = "disabled"
         except:
             self.txtConsole["state"] = "normal"
             self.txtConsole.insert(END, "Server running with errors\n")
             self.txtConsole.insert(END, "s.bind((" + str(host) + ", " + str(port) +
                                    ")) or s.listen(" + str(quant) + ") it's not correct\n\n")
+            self.txtConsole.yview_moveto(1.0)
             self.txtConsole["state"] = "disabled"
         finally:
             self.lblStatus["text"] = "Server: Running"
+            self.lblStatus["fg"] = "green"
             self.btnStop["state"] = "normal"
             
             self.txtConsole["state"] = "normal"
             self.txtConsole.insert(END, "Waiting for Connection...\n\n")
+            self.txtConsole.yview_moveto(1.0)
             self.txtConsole["state"] = "disabled"
             
             cont = 0
@@ -183,6 +203,7 @@ class Server:
                 
                 self.txtConsole["state"] = "normal"
                 self.txtConsole.insert(END, "Connected in " + str(ender) + " at " + str(self.now()) + "\n\n")
+                self.txtConsole.yview_moveto(1.0)
                 self.txtConsole["state"] = "disabled"
         
                 clients[cont] = conn
@@ -210,9 +231,11 @@ class Server:
         
         self.txtConsole["state"] = "normal"
         self.txtConsole.insert(END, "Server stopped\n\n")
+        self.txtConsole.yview_moveto(1.0)
         self.txtConsole["state"] = "disabled"
         
         self.lblStatus["text"] = "Server: Stopped"
+        self.lblStatus["fg"] = "red"
         self.btnStart["state"] = "normal"
     
     def init(self):
@@ -220,7 +243,7 @@ class Server:
         threading.Thread(target=self.run).start()
         
     def saveFile(self):
-        file = open("initial.config", "w")
+        file = open(path + "initial.config", "w")
         if self.txtIp.get() != "" :
             file.write("ip:" + self.txtIp.get() + "\n")
         else:
@@ -242,13 +265,13 @@ quant = 5
 #run()
 
 try:
-    file = open("initial.config", "r")
+    file = open(path + "initial.config", "r")
     host = file.readline().replace("ip:", "").replace("\n", "")
     port = int(file.readline().replace("port:", "").replace("\n", ""))
     quant = int(file.readline().replace("listen:", ""))
     file.close()
 except:
-    file = open("initial.config", "a")
+    file = open(path + "initial.config", "a")
     file.write("ip:localhost\n")
     file.write("port:5000\n")
     file.write("listen:5")
@@ -256,7 +279,9 @@ except:
 
 window = Tk()
 Server(window)
-window.title("Server - IM v1.0")
-window.resizable(width=False, height=False)
+window.title("Server - IM v1.3")
+#window.resizable(width=False, height=False)
 window.geometry("600x400")
+window.minsize(width=600, height=400)
+window.maxsize(width=620, height=420)
 window.mainloop()
