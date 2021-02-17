@@ -126,7 +126,7 @@ except:
 
 log = Tk()
 Login(log)
-log.title("Acesso - IM v1.3")
+log.title("Acesso - IM v1.4")
 log.geometry("300x250+250+250")
 log.resizable(width=False, height=False)
 log.mainloop()

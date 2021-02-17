@@ -2,21 +2,36 @@ from tkinter import *
 from tkinter import messagebox
 import socket
 import threading
+import os
+
+path = os.path.expanduser("~/")
 
 host = 'localhost'
-port = 5000
+port = 0    
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 class panel:
     def __init__(self, name="Dev", master=None):
+        try:
+            file = open(path + "clientConfig.config", "r")
+            file.readline()
+            host = file.readline().replace("ip:", "").replace("\n", "")
+            port = int(file.readline().replace("port:", ""))
+            file.close()
+            print(host)
+            print(port)
+        except:
+            host = 'localhost'
+            port = 5000
+        
         self.name = name
         #self.name = "Teste"
         self.th = False
         
         #Declarando os parametros da janela
         self.window = master
-        self.window.title("Internal Messages v1.3")
+        self.window.title("Internal Messages v1.4")
         self.window.geometry("800x600+50+50")
         self.window.minsize(width=800, height=600)
         self.window.maxsize(width=800, height=660)
@@ -131,7 +146,7 @@ class panel:
 
 #window = Tk()
 #panel(window)
-#window.title("Internal Messages v1.3")
+#window.title("Internal Messages v1.4")
 #window.geometry("800x600")
 #window.resizable(width=False, height=False)
 #window.mainloop()

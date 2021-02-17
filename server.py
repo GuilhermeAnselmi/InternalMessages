@@ -279,7 +279,7 @@ except:
 
 window = Tk()
 Server(window)
-window.title("Server - IM v1.3")
+window.title("Server - IM v1.4")
 #window.resizable(width=False, height=False)
 window.geometry("600x400")
 window.minsize(width=600, height=400)
