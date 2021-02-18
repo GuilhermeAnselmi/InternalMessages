@@ -79,7 +79,7 @@ class Login:
                         file.writelines("port:" + port)
                         file.close()
                     except:
-                        messengebox.showwarning(title="Error - IM", message="Impossible create or modify file clientConfig.config")
+                        messagebox.showwarning(title="Error - IM", message="Impossible create or modify file clientConfig.config")
                 except:
                     file = open(path + "clientConfig.config", "w")
                     file.writelines("name:" + name + "\n")
@@ -87,6 +87,8 @@ class Login:
                     file.writelines("port:" + port)
                     file.close()
                 finally:
+                    messagebox.showinfo(title="Internal Message", message="Bem-Vindo " + name)
+                    
                     log.destroy()
                     
                     window = Tk()
@@ -94,6 +96,8 @@ class Login:
                     window.mainloop()
                 
             else:
+                messagebox.showinfo(title="Internal Message", message="Bem-Vindo " + name)
+                
                 log.destroy()
                 
                 window = Tk()
@@ -126,7 +130,7 @@ except:
 
 log = Tk()
 Login(log)
-log.title("Acesso - IM v1.4")
+log.title("Acesso - IM v1.5")
 log.geometry("300x250+250+250")
 log.resizable(width=False, height=False)
 log.mainloop()

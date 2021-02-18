@@ -50,8 +50,7 @@ class Client:
         self.lblIp = Label(self.englob, text="IP")
         self.lblIp.grid(row = 0, column = 0)
         
-        self.txtIp = Entry(self.englob, validate="key")
-        self.txtIp["validatecommand"] = (self.txtIp.register(testVal),"%P","%d")
+        self.txtIp = Entry(self.englob)
         self.txtIp.grid(row = 0, column = 1)
         
         if host != "localhost":

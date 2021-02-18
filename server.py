@@ -58,8 +58,7 @@ class Server:
         self.lblPort = Label(self.fm1, text="Port")
         self.lblPort.grid(row = 1, column = 0, padx=10)
         
-        self.txtIp = Entry(self.fm1, validate="key")
-        self.txtIp["validatecommand"] = (self.txtIp.register(testVal),"%P","%d")
+        self.txtIp = Entry(self.fm1)
         self.txtIp.grid(row = 0, column = 1, padx=10)
         
         if host != "localhost":
@@ -279,9 +278,9 @@ except:
 
 window = Tk()
 Server(window)
-window.title("Server - IM v1.4")
-#window.resizable(width=False, height=False)
-window.geometry("600x400")
-window.minsize(width=600, height=400)
-window.maxsize(width=620, height=420)
+window.title("Server - IM v1.5")
+window.resizable(width=False, height=False)
+window.geometry("650x420")
+#window.minsize(width=600, height=400)
+#window.maxsize(width=620, height=420)
 window.mainloop()

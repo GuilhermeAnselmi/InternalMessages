@@ -3,6 +3,7 @@ from tkinter import messagebox
 import socket
 import threading
 import os
+import time
 
 path = os.path.expanduser("~/")
 
@@ -31,16 +32,16 @@ class panel:
         
         #Declarando os parametros da janela
         self.window = master
-        self.window.title("Internal Messages v1.4")
-        self.window.geometry("800x600+50+50")
-        self.window.minsize(width=800, height=600)
-        self.window.maxsize(width=800, height=660)
-        #self.window.resizable(width=False, height=False)
+        self.window.title("Internal Messages v1.5")
+        self.window.geometry("800x630+50+50")
+        #self.window.minsize(width=800, height=600)
+        #self.window.maxsize(width=800, height=660)
+        self.window.resizable(width=False, height=False)
         
         try:
             s.connect((host, port))
             s.send(str.encode(str("00-00-00-00-00-00")))
-            messagebox.showinfo(title="Internal Message", message="Bem-Vindo " + self.name)
+            time.sleep(1.5)
             s.send(str.encode(str("00-00-6e-61-6d-65" + self.name)))
         except:
             messagebox.showwarning(title="Internal Message Error", message="Error Code: 503\nServidor não encontrado")
@@ -146,7 +147,7 @@ class panel:
 
 #window = Tk()
 #panel(window)
-#window.title("Internal Messages v1.4")
+#window.title("Internal Messages v1.5")
 #window.geometry("800x600")
 #window.resizable(width=False, height=False)
 #window.mainloop()
